@@ -117,28 +117,24 @@ function update(secondsPassed){
         //check for wall collisions
         environment.walls.forEach(wall => {
             if(checkCircleToRectCollision(entity, wall)){
-                if (entity.position.x + entity.moveDirection.x > 
-                    (wall.x - wall.width/2) - entity.width/2 &&
+                if (entity.position.x + entity.moveDirection.x > (wall.x - wall.width/2) - entity.width/2 &&
                     entity.position.x < (wall.x - wall.width/2)){
-                    entity.velocity.x = -entity.moveDirection.x;
+                    entity.velocity.x = -entity.moveDirection.x * 1.25;
                     entity.position.x = wall.x - wall.width/2 - entity.width/2;
                 }
-                else if (entity.position.x + entity.moveDirection.x < 
-                    (wall.x + wall.width/2) + entity.width/2 &&
+                else if (entity.position.x + entity.moveDirection.x < (wall.x + wall.width/2) + entity.width/2 &&
                     entity.position.x > (wall.x + wall.width/2)){
-                    entity.velocity.x = -entity.moveDirection.x;
+                    entity.velocity.x = -entity.moveDirection.x * 1.25;
                     entity.position.x = wall.x + wall.width/2 + entity.width/2;
                 }
-                else if (entity.position.y + entity.moveDirection.y > 
-                    (wall.y - wall.height/2) - entity.height/2 &&
+                else if (entity.position.y + entity.moveDirection.y > (wall.y - wall.height/2) - entity.height/2 &&
                     entity.position.y < (wall.y - wall.height/2)){
-                    entity.velocity.y = -entity.moveDirection.y;
+                    entity.velocity.y = -entity.moveDirection.y * 1.25;
                     entity.position.y = wall.y - wall.height/2 - entity.height/2;
                 }
-                else if (entity.position.y + entity.moveDirection.y < 
-                    (wall.y + wall.height/2) + entity.height/2 &&
+                else if (entity.position.y + entity.moveDirection.y < (wall.y + wall.height/2) + entity.height/2 &&
                     entity.position.y > (wall.y + wall.height/2)){
-                    entity.velocity.y = -entity.moveDirection.y;
+                    entity.velocity.y = -entity.moveDirection.y * 1.25;
                     entity.position.y = wall.y + wall.height/2 + entity.height/2;
                 }
             }
