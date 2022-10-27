@@ -19,6 +19,8 @@ export class Entity{
         this.moveSpeed = 200;
 
         this.projectiles = [];
+        this.lives = 3;
+        this.markedForDeletion = false;
     }
 
     update(secondsPassed){
@@ -72,6 +74,11 @@ export class Entity{
             this.width,
             this.height
         );
+
+        //lives
+        context.fillStyle = 'white';
+        context.font = '20px Helvetica';
+        context.fillText(this.lives, this.position.x - 14, this.position.y + 4);
 
         //projectiles
         this.projectiles.forEach(projctile => {

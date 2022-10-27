@@ -117,10 +117,16 @@ function update(secondsPassed){
             entity.projectiles.forEach(projectile => {
                 if(checkCircleCollision(projectile, otherEntity)){
                     projectile.markedForDeletion = true;
-                    
+
                     //projectile hit pushback
                     otherEntity.velocity.x += projectile.direction.x * projectile.pushPower;
                     otherEntity.velocity.y += projectile.direction.y * projectile.pushPower;
+
+                    otherEntity.lives--;
+                    if(otherEntity.lives <= 0){
+                        otherEntity.markedForDeletion = true;
+                        //this.score++;
+                    }
                 }
             });
         });
@@ -158,13 +164,15 @@ function update(secondsPassed){
             });
         })
     });
-    
+    entities = entities.filter(entity => !entity.markedForDeletion);
 }
 
 function draw(){
     //clear the entire canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
 
+    //TODO: make follow stop on edges of environment.
+    //      instead of following player center, use player and cursor.
     follow.x = lerp(follow.x, -entities[0].position.x + canvas.width / 2, followSpeed);
     follow.y = lerp(follow.y, -entities[0].position.y + canvas.height / 2, followSpeed);
 
@@ -172,7 +180,6 @@ function draw(){
     context.translate(follow.x, follow.y);
 
     environment.draw(context);
-
     entities.forEach(entity => {
         entity.draw(context);
     });
