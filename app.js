@@ -37,7 +37,9 @@ function init(){
     entities[0].isMine = true;
 
     entities.forEach(entity => {
+        entity.image = entity.spriteBlue;
         if(!entity.isMine){
+            entity.image = entity.spriteRed;
             entity.position.x = Math.random() * canvas.width/2 + canvas.width/4;
             entity.position.y = Math.random() * canvas.height/2 + canvas.height/4;
             entity.velocity.x = Math.random() * 400 - 200;
@@ -124,7 +126,9 @@ function update(secondsPassed){
 
                     otherEntity.lives--;
                     if(otherEntity.lives <= 0){
-                        otherEntity.markedForDeletion = true;
+                        otherEntity.lives = 0;
+                        otherEntity.image = otherEntity.spriteGrey;
+                        //otherEntity.markedForDeletion = true;
                         //this.score++;
                     }
                 }

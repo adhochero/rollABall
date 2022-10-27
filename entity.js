@@ -5,6 +5,9 @@ export class Entity{
         this.keys = keys;
         this.isMine = false;
 
+        this.spriteGrey = document.getElementById('sphere');
+        this.spriteRed = document.getElementById('sphere__red');
+        this.spriteBlue = document.getElementById('sphere__blue');
         this.image = document.getElementById('sphere');
         this.scale = 3;
         this.width = this.image.width * this.scale;
