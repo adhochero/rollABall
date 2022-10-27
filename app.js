@@ -9,7 +9,7 @@ let lastTimeStamp = 0;
 let fps;
 let input;
 let keys = [];
-let entities;
+let entities = [];
 let environment;
 let follow = {x: 0, y: 0};
 let followSpeed = 0.05;
@@ -24,8 +24,6 @@ function init(){
     canvas.height = 500;
 
     environment = new Environment();
-
-    input = new Input(keys);
     entities = [
         new Entity(canvas, keys),
         new Entity(canvas, keys),
@@ -46,6 +44,8 @@ function init(){
             entity.velocity.y = Math.random() * 400 - 200;
         }
     });
+
+    input = new Input(keys, entities);
 
     follow.x = -entities[0].position.x + canvas.width / 2;
     follow.y = -entities[0].position.y + canvas.height / 2;
@@ -77,7 +77,7 @@ function update(secondsPassed){
     entities.forEach(entity => {
         entity.update(secondsPassed);
 
-        //check for entity collisions
+        //check for other entity collisions
         entities.forEach(otherEntity => {
             if(otherEntity === entity) return;
             
@@ -112,10 +112,21 @@ function update(secondsPassed){
                 otherEntity.velocity.x += (speed * collisionNormal.x);
                 otherEntity.velocity.y += (speed * collisionNormal.y);
             }
+
+            //check for projectile/other entity collision
+            entity.projectiles.forEach(projectile => {
+                if(checkCircleCollision(projectile, otherEntity)){
+                    projectile.markedForDeletion = true;
+                    
+                    //projectile hit pushback
+                    otherEntity.velocity.x += projectile.direction.x * projectile.pushPower;
+                    otherEntity.velocity.y += projectile.direction.y * projectile.pushPower;
+                }
+            });
         });
 
-        //check for wall collisions
         environment.walls.forEach(wall => {
+            //check for entity/wall collisions
             if(checkCircleToRectCollision(entity, wall)){
                 if (entity.position.x + entity.moveDirection.x > (wall.x - wall.width/2) - entity.width/2 &&
                     entity.position.x < (wall.x - wall.width/2)){
@@ -138,6 +149,13 @@ function update(secondsPassed){
                     entity.position.y = wall.y + wall.height/2 + entity.height/2;
                 }
             }
+
+            //check for projectile/wall collision
+            entity.projectiles.forEach(projectile => {
+                if(checkCircleToRectCollision(projectile, wall)){
+                    projectile.markedForDeletion = true;
+                }
+            });
         })
     });
     

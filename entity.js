@@ -1,6 +1,9 @@
+import { Projectile } from "./projectile.js";
+
 export class Entity{
     constructor(canvas, keys){
         this.keys = keys;
+        this.isMine = false;
 
         this.image = document.getElementById('sphere');
         this.scale = 3;
@@ -15,7 +18,7 @@ export class Entity{
         this.inputResponsiveness = 3;
         this.moveSpeed = 200;
 
-        this.isMine = false;
+        this.projectiles = [];
     }
 
     update(secondsPassed){
@@ -37,7 +40,7 @@ export class Entity{
     
             //smooth input movement using lerp
             this.inputSmoothing.x = this.lerp(this.inputSmoothing.x, this.inputDirection.x, this.inputResponsiveness * secondsPassed);
-            this.inputSmoothing.y = this.lerp(this.inputSmoothing.y, this.inputDirection.y, this.inputResponsiveness * secondsPassed);            
+            this.inputSmoothing.y = this.lerp(this.inputSmoothing.y, this.inputDirection.y, this.inputResponsiveness * secondsPassed);
         }
 
         //move velocity to zero
@@ -51,6 +54,12 @@ export class Entity{
         //move
         this.position.x += this.moveDirection.x * secondsPassed;
         this.position.y += this.moveDirection.y * secondsPassed;
+
+        //projectiles
+        this.projectiles.forEach(projctile => {
+            projctile.update();
+        });
+        this.projectiles = this.projectiles.filter(projectile => !projectile.markedForDeletion);
     }
 
     draw(context){
@@ -63,9 +72,26 @@ export class Entity{
             this.width,
             this.height
         );
+
+        //projectiles
+        this.projectiles.forEach(projctile => {
+            projctile.draw(context);
+        });
+        this.projectiles = this.projectiles.filter(projectile => !projectile.markedForDeletion);
     }
 
     lerp(start, end, t){
         return  (1 - t) * start + end * t;
+    }
+
+    shoot(angleDirection){
+        let recoil = 100;
+
+        //recoil pushback
+        this.velocity.x += -angleDirection.x * recoil;
+        this.velocity.y += -angleDirection.y * recoil;
+
+        //spawn bullet
+        this.projectiles.push(new Projectile(this.position, angleDirection));
     }
 }
