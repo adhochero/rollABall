@@ -24,6 +24,39 @@ export class Entity{
         this.projectiles = [];
         this.lives = 3;
         this.markedForDeletion = false;
+
+        this.joystickRange = 50;
+        this.initX = 0;
+        this.initY = 0;
+        this.joystickX = 0;
+        this.joystickY = 0;
+
+        window.addEventListener('mousedown', e =>{
+            this.initX = e.clientX || e.touches[0].clientX;
+            this.initY = e.clientY || e.touches[0].clientY;
+        })
+
+        document.addEventListener('mousemove', e =>{
+            let draggedX = (e.clientX || e.touches[0].clientX) - initX;
+            let draggedY = (e.clientY || e.touches[0].clientY) - initY;
+
+            //clamps to joystickRange
+            draggedX = (draggedX > 0) ? Math.min(joystickRange, draggedX): Math.max(-joystickRange, draggedX);
+            draggedY = (draggedY > 0) ? Math.min(joystickRange, draggedY): Math.max(-joystickRange, draggedY);
+
+            //scaling 0 to 1
+            draggedX /= joystickRange;
+            draggedY /= joystickRange;
+
+            //solves diagonal discrepancy
+            if(draggedX !== 0 && draggedY !== 0){
+                draggedX *= Math.SQRT1_2;
+                draggedY *= Math.SQRT1_2;
+            }
+
+            this.joystickX = draggedX;
+            this.joystickY = draggedY;
+        });
     }
 
     update(secondsPassed){
@@ -36,6 +69,9 @@ export class Entity{
             if(this.keys.includes('w') && !this.keys.includes('s')) this.inputDirection.y = -1;
             else if(this.keys.includes('s') && !this.keys.includes('w')) this.inputDirection.y = 1;
             else this.inputDirection.y = 0;
+
+            this.inputDirection.x = this.joystickX;
+            this.inputDirection.y = this.joystickY;
     
             //solves diagonal movement speed discrepancy
             if(this.inputDirection.x !== 0 && this.inputDirection.y !== 0){

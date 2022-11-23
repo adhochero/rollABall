@@ -41,5 +41,6 @@ export class Input{
                 entity.shoot(angleDirection);
             });
         })
+        
     }
 }
